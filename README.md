@@ -1,2 +1,2 @@
 # DQN-Snake
-Train DQN model for playing in snake game
+Training a model based on the DQN algorithm to play a snake
