@@ -8,6 +8,7 @@ import random
 from collections import deque
 import pygame
 from SnakeEnv import SnakeEnv
+import matplotlib.pyplot as plt
 
 class DQN(nn.Module):
     def __init__(self, input_size, output_size):
@@ -17,9 +18,10 @@ class DQN(nn.Module):
         self.fc3 = nn.Linear(128, output_size)
 
     def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        return self.fc3(x)
+        x = F.leaky_relu(self.fc1(x))
+        x = F.leaky_relu(self.fc2(x))
+        x = F.leaky_relu(self.fc3(x))
+        return x
 
 class DQNAgent:
     def __init__(self, state_size, action_size):
@@ -89,6 +91,8 @@ if __name__ == "__main__":
     state_size = len(env.reset())
     action_size = 3
 
+    episodes_reward = []
+
     agent = DQNAgent(state_size, action_size)
     episodes = 1000
     batch_size = 32
@@ -120,6 +124,9 @@ if __name__ == "__main__":
             print(
                 f"Episode: {e + 1}/{episodes}, Score: {env.reward}, Epsilon: {agent.epsilon:.2f}")
 
+            episodes_reward.append(env.reward)
     finally:
         env.close()
-        # torch.save(agent.policy_net.state_dict(), 'snake_dqn.pth')
+        torch.save(agent.policy_net.state_dict(), r'C:\py projects\pythonProject\Previous projects\snake_dqn.pth')
+
+        plt.plot(np.arange(1, episodes), episodes_reward)

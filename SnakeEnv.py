@@ -23,14 +23,8 @@ class SnakeEnv:
             pygame.init()
             self.screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
             pygame.display.set_caption("Snake DQN")
+
         self.reset()
-        self.snake = [(self.grid_size // 2, self.grid_size // 2)]
-        self.direction = (0, 1)
-        self.food = self._place_food()
-        self.done = False
-        self.reward = 0
-        self.steps = 0
-        self.count_apples = 0
 
     def reset(self):
         self.snake = [(self.grid_size // 2, self.grid_size // 2)]
@@ -43,6 +37,8 @@ class SnakeEnv:
         return self._get_state()
 
     def _place_food(self):
+        random.seed(128)
+
         while True:
             food = (random.randint(0, self.grid_size - 1),
                     random.randint(0, self.grid_size - 1))
@@ -56,6 +52,8 @@ class SnakeEnv:
 
         rel_food_x = food_x - head_x
         rel_food_y = food_y - head_y
+        manchet_dist = abs(rel_food_x) + abs(rel_food_y)
+        evclid_dist = sqrt(rel_food_x**2 + rel_food_y**2)
 
         directions = [
             (0, 1),
@@ -93,6 +91,8 @@ class SnakeEnv:
 
         state = [
             rel_food_x / self.grid_size,
+            manchet_dist/self.grid_size,
+            evclid_dist/self.grid_size,
             rel_food_y / self.grid_size,
             *wall_distances
         ]
@@ -174,5 +174,3 @@ class SnakeEnv:
     def close(self):
         if self.render:
             pygame.quit()
-
-
